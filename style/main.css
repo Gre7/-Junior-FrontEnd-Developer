@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  padding-top: 24px;
+}
+
+a,
+button {
+  cursor: pointer;
+  color: inherit;
+}
+
+.hide {
+  display: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.search-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.input {
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 8px 8px 8px 35px;
+  background-repeat: no-repeat;
+  background-position: left 11px center;
+}
+
+.search {
+  flex: 0.8;
+}
+
+.input-search {
+  width: 100%;
+  background-image: url(../icon/search.svg);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.0015);
+  border-radius: 2px;
+  color: #595959;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.button:hover {
+  background: #1890ff;
+  border: 1px solid #1890ff;
+  color: #fff;
+}
+
+table {
+  margin-top: 20px;
+  width: 100%;
+  background: #000;
+  color: black;
+  border-spacing: 1px;
+  opacity: 0.9;
+}
+
+td,
+th {
+  background: #1890ff;
+  padding: 5px;
+}
+
+.table {
+  display: flex;
+  justify-content: center;
+}
+
+/*tooltip*/
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipimg {
+  visibility: hidden;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltipimg {
+  visibility: visible;
+}
