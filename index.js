@@ -1,6 +1,8 @@
 //const tableUsers = document.getElementById('tableUsers')
 const container = document.getElementById('container')
 const table = document.querySelector('.table')
+const searchContainer = document.querySelector('.search-container')
+const categories = document.getElementById('categories')
 //Get data
 // const getData = async (url) => {
 //   const response = await fetch(url)
@@ -30,46 +32,49 @@ loader.insertAdjacentHTML(
   `
 )
 
+searchContainer.className = 'hide'
+categories.className = 'hide'
+
 //CreateSearchBar
-const createSearchBar = () => {
-  const searchBar = document.createElement('div')
-  searchBar.className = 'search-container'
-  searchBar.insertAdjacentHTML(
-    'beforeend',
-    `
-    <label class="search">
-      <input type="text" class="input input-search" placeholder="Search" />
-    </label>
-    <div class="buttons">
-      <button class="button">
-        <span>Clear</span>
-      </button>
-    </div>
-  `
-  )
-  container.insertBefore(searchBar, table)
-}
+// const createSearchBar = () => {
+//   const searchBar = document.createElement('div')
+//   searchBar.className = 'search-container'
+//   searchBar.insertAdjacentHTML(
+//     'beforeend',
+//     `
+//     <label class="search">
+//       <input type="text" class="input input-search" placeholder="Search" />
+//     </label>
+//     <div class="buttons">
+//       <button class="button">
+//         <span>Clear</span>
+//       </button>
+//     </div>
+//   `
+//   )
+//   container.insertBefore(searchBar, table)
+// }
 
 //CreateFirstRowInTable
 
-const createFirstRow = () => {
-  const tableUsers = document.createElement('table')
-  tableUsers.id = 'tableUsers'
-  tableUsers.insertAdjacentHTML(
-    'beforeend',
-    `
-    <tr>
-      <th>Name</th>
-      <th>Picture</th>
-      <th>Location</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Registered Date</th>
-    </tr>
-  `
-  )
-  table.append(tableUsers)
-}
+// const createFirstRow = () => {
+//   const tableUsers = document.createElement('table')
+//   tableUsers.id = 'tableUsers'
+//   tableUsers.insertAdjacentHTML(
+//     'beforeend',
+//     `
+//     <tr>
+//       <th>Name</th>
+//       <th>Picture</th>
+//       <th>Location</th>
+//       <th>Email</th>
+//       <th>Phone</th>
+//       <th>Registered Date</th>
+//     </tr>
+//   `
+//   )
+//   table.append(tableUsers)
+// }
 
 //renderUsers
 const createUsers = (options) => {
@@ -87,6 +92,8 @@ const createUsers = (options) => {
   </table>
   `
   )
+  searchContainer.className = 'search-container'
+  categories.className = ''
   loader.remove()
 }
 
@@ -95,8 +102,8 @@ fetch('https://randomuser.me/api/?results=15')
     if (!response.ok) {
       throw new Error(`Error at ${url}, error status: ${response.status}!`)
     }
-    createSearchBar()
-    createFirstRow()
+    //createSearchBar()
+    //createFirstRow()
     return response.json()
   })
   .then((options) => {
@@ -104,4 +111,6 @@ fetch('https://randomuser.me/api/?results=15')
     options.results.forEach(createUsers)
   })
 
+const input = document.querySelector('.input-search')
+console.log('input: ', input)
 //getData('https://randomuser.me/api/?results=15').then(options)
