@@ -1,8 +1,41 @@
-//const tableUsers = document.getElementById('tableUsers')
-const container = document.getElementById('container')
-const table = document.querySelector('.table')
-const searchContainer = document.querySelector('.search-container')
-const categories = document.getElementById('categories')
+const tableUsers = document.getElementById('tableUsers');
+const container = document.getElementById('container');
+const table = document.querySelector('.table');
+const searchContainer = document.querySelector('.search-container');
+const categories = document.getElementById('categories');
+const inputSearch = document.querySelector('.input-search');
+
+let userList = [];
+
+fetch('https://randomuser.me/api/?results=15')
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`Error at ${url}, error status: ${response.status}!`);
+    }
+    return response.json();
+  })
+  .catch(console.log)
+  .then((options) => {
+    console.log(options);
+    userList = options.results;
+    updateTable(userList);
+  });
+
+const updateTable = (users) => {
+  tableUsers.innerHTML = '';
+  users.forEach(createUsers);
+};
+
+inputSearch.addEventListener('keyup', () => {
+  const text = inputSearch.value.toLowerCase().trim();
+  const filteredList = userList.filter(
+    (user) =>
+      user.name.first.toLowerCase().trim().indexOf(text) !== -1 ||
+      user.name.last.toLowerCase().trim().indexOf(text) !== -1
+  );
+  console.log(filteredList, 'filteredList');
+  updateTable(filteredList);
+});
 //Get data
 // const getData = async (url) => {
 //   const response = await fetch(url)
@@ -15,9 +48,9 @@ const categories = document.getElementById('categories')
 // }
 
 //Createloader
-const loader = document.createElement('div')
-document.body.append(loader)
-loader.className = 'lds-roller'
+const loader = document.createElement('div');
+document.body.append(loader);
+loader.className = 'lds-roller';
 loader.insertAdjacentHTML(
   'beforeend',
   `
@@ -30,51 +63,10 @@ loader.insertAdjacentHTML(
     <div></div>
     <div></div>
   `
-)
+);
 
-searchContainer.className = 'hide'
-categories.className = 'hide'
-
-//CreateSearchBar
-// const createSearchBar = () => {
-//   const searchBar = document.createElement('div')
-//   searchBar.className = 'search-container'
-//   searchBar.insertAdjacentHTML(
-//     'beforeend',
-//     `
-//     <label class="search">
-//       <input type="text" class="input input-search" placeholder="Search" />
-//     </label>
-//     <div class="buttons">
-//       <button class="button">
-//         <span>Clear</span>
-//       </button>
-//     </div>
-//   `
-//   )
-//   container.insertBefore(searchBar, table)
-// }
-
-//CreateFirstRowInTable
-
-// const createFirstRow = () => {
-//   const tableUsers = document.createElement('table')
-//   tableUsers.id = 'tableUsers'
-//   tableUsers.insertAdjacentHTML(
-//     'beforeend',
-//     `
-//     <tr>
-//       <th>Name</th>
-//       <th>Picture</th>
-//       <th>Location</th>
-//       <th>Email</th>
-//       <th>Phone</th>
-//       <th>Registered Date</th>
-//     </tr>
-//   `
-//   )
-//   table.append(tableUsers)
-// }
+searchContainer.className = 'hide';
+categories.className = 'hide';
 
 //renderUsers
 const createUsers = (options) => {
@@ -82,7 +74,7 @@ const createUsers = (options) => {
     'beforeend',
     `
     <tr>
-      <th>${options.name.first + ' ' + options.name.first}</th>
+      <th>${options.name.first + ' ' + options.name.last}</th>
       <th><img src="${options.picture.thumbnail}" class="tooltip"></th>
       <th>${options.location.state + ' ' + options.location.city}</th>
       <th>${options.email}</th>
@@ -91,26 +83,10 @@ const createUsers = (options) => {
     </tr>
   </table>
   `
-  )
-  searchContainer.className = 'search-container'
-  categories.className = ''
-  loader.remove()
-}
+  );
+  searchContainer.className = 'search-container';
+  categories.className = '';
+  loader.remove();
+};
 
-fetch('https://randomuser.me/api/?results=15')
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`Error at ${url}, error status: ${response.status}!`)
-    }
-    //createSearchBar()
-    //createFirstRow()
-    return response.json()
-  })
-  .then((options) => {
-    console.log(options)
-    options.results.forEach(createUsers)
-  })
-
-const input = document.querySelector('.input-search')
-console.log('input: ', input)
 //getData('https://randomuser.me/api/?results=15').then(options)
