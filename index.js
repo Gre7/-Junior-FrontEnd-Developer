@@ -4,6 +4,7 @@ const table = document.querySelector('.table');
 const searchContainer = document.querySelector('.search-container');
 const categories = document.getElementById('categories');
 const inputSearch = document.querySelector('.input-search');
+const clearBtn = document.querySelector('.button_clear');
 
 let userList = [];
 
@@ -23,19 +24,41 @@ fetch('https://randomuser.me/api/?results=15')
 
 const updateTable = (users) => {
   tableUsers.innerHTML = '';
+  console.log('проверка');
   users.forEach(createUsers);
 };
 
-inputSearch.addEventListener('keyup', () => {
+const filterInput = () => {
   const text = inputSearch.value.toLowerCase().trim();
   const filteredList = userList.filter(
     (user) =>
-      user.name.first.toLowerCase().trim().indexOf(text) !== -1 ||
-      user.name.last.toLowerCase().trim().indexOf(text) !== -1
+      user.name.first.toLowerCase().indexOf(text) !== -1 ||
+      user.name.last.toLowerCase().indexOf(text) !== -1
   );
   console.log(filteredList, 'filteredList');
   updateTable(filteredList);
+};
+
+inputSearch.addEventListener('keyup', debounce(filterInput, 500));
+
+clearBtn.addEventListener('click', () => {
+  inputSearch.value = '';
+  updateTable(userList);
 });
+
+function debounce(f, ms) {
+  let isCooldown = false;
+
+  return function () {
+    if (isCooldown) return;
+
+    f.apply(this, arguments);
+
+    isCooldown = true;
+
+    setTimeout(() => (isCooldown = false), ms);
+  };
+}
 //Get data
 // const getData = async (url) => {
 //   const response = await fetch(url)
@@ -48,6 +71,8 @@ inputSearch.addEventListener('keyup', () => {
 // }
 
 //Createloader
+//const createLoader = () => {};
+
 const loader = document.createElement('div');
 document.body.append(loader);
 loader.className = 'lds-roller';
@@ -68,6 +93,7 @@ loader.insertAdjacentHTML(
 searchContainer.className = 'hide';
 categories.className = 'hide';
 
+//const removeLoader = () => {};
 //renderUsers
 const createUsers = (options) => {
   tableUsers.insertAdjacentHTML(
