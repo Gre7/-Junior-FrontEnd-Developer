@@ -5,9 +5,34 @@ const searchContainer = document.querySelector('.search-container');
 const categories = document.getElementById('categories');
 const inputSearch = document.querySelector('.input-search');
 const clearBtn = document.querySelector('.button_clear');
+const loader = document.createElement('div');
 
 let userList = [];
 
+//Createloader
+const createLoader = () => {
+  document.body.append(loader);
+  loader.className = 'lds-roller';
+  loader.insertAdjacentHTML(
+    'beforeend',
+    `
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  `
+  );
+  searchContainer.className = 'hide';
+  categories.className = 'hide';
+};
+
+createLoader();
+
+//Server request
 fetch('https://randomuser.me/api/?results=15')
   .then((response) => {
     if (!response.ok) {
@@ -17,17 +42,16 @@ fetch('https://randomuser.me/api/?results=15')
   })
   .catch(console.log)
   .then((options) => {
-    console.log(options);
     userList = options.results;
     updateTable(userList);
   });
 
 const updateTable = (users) => {
   tableUsers.innerHTML = '';
-  console.log('проверка');
   users.forEach(createUsers);
 };
 
+//Filter
 const filterInput = () => {
   const text = inputSearch.value.toLowerCase().trim();
   const filteredList = userList.filter(
@@ -35,7 +59,13 @@ const filterInput = () => {
       user.name.first.toLowerCase().indexOf(text) !== -1 ||
       user.name.last.toLowerCase().indexOf(text) !== -1
   );
-  console.log(filteredList, 'filteredList');
+  console.log('filteredList: ', filteredList);
+  if (filteredList.length === 0) {
+    const message = document.createElement('p');
+    message.textContent = 'К сожалению, совпадения не найдены!';
+    message.className = 'message';
+    container.append(message);
+  }
   updateTable(filteredList);
 };
 
@@ -59,41 +89,10 @@ function debounce(f, ms) {
     setTimeout(() => (isCooldown = false), ms);
   };
 }
-//Get data
-// const getData = async (url) => {
-//   const response = await fetch(url)
-//   if (!response.ok) {
-//     throw new Error(`Error at ${url}, error status: ${response.status}!`)
-//   }
 
-//   return await response.json()
-//   console.log('response: ', response)
-// }
-
-//Createloader
-//const createLoader = () => {};
-
-const loader = document.createElement('div');
-document.body.append(loader);
-loader.className = 'lds-roller';
-loader.insertAdjacentHTML(
-  'beforeend',
-  `
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-  `
-);
-
-searchContainer.className = 'hide';
-categories.className = 'hide';
-
-//const removeLoader = () => {};
+const removeLoader = () => {
+  loader.remove();
+};
 //renderUsers
 const createUsers = (options) => {
   tableUsers.insertAdjacentHTML(
@@ -112,7 +111,18 @@ const createUsers = (options) => {
   );
   searchContainer.className = 'search-container';
   categories.className = '';
-  loader.remove();
+  removeLoader();
 };
+
+//Get data
+// const getData = async (url) => {
+//   const response = await fetch(url)
+//   if (!response.ok) {
+//     throw new Error(`Error at ${url}, error status: ${response.status}!`)
+//   }
+
+//   return await response.json()
+//   console.log('response: ', response)
+// }
 
 //getData('https://randomuser.me/api/?results=15').then(options)
