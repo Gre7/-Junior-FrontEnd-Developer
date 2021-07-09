@@ -6,6 +6,7 @@ const categories = document.getElementById('categories');
 const inputSearch = document.querySelector('.input-search');
 const clearBtn = document.querySelector('.button_clear');
 const loader = document.createElement('div');
+const message = document.querySelector('.message');
 
 let userList = [];
 
@@ -59,12 +60,10 @@ const filterInput = () => {
       user.name.first.toLowerCase().indexOf(text) !== -1 ||
       user.name.last.toLowerCase().indexOf(text) !== -1
   );
-  console.log('filteredList: ', filteredList);
   if (filteredList.length === 0) {
-    const message = document.createElement('p');
-    message.textContent = 'К сожалению, совпадения не найдены!';
-    message.className = 'message';
-    container.append(message);
+    message.classList.remove('hide');
+  } else {
+    message.classList.add('hide');
   }
   updateTable(filteredList);
 };
@@ -73,6 +72,7 @@ inputSearch.addEventListener('keyup', debounce(filterInput, 500));
 
 clearBtn.addEventListener('click', () => {
   inputSearch.value = '';
+  message.classList.add('hide');
   updateTable(userList);
 });
 
