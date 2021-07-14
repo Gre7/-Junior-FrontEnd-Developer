@@ -55,11 +55,15 @@ const updateTable = (users) => {
 
 //Filter
 const filterInput = () => {
-  const text = inputSearch.value.toLowerCase().trim();
+  const text = inputSearch.value.replace(/\s/g, '').toLowerCase();
+
   const filteredList = userList.filter(
     (user) =>
       user.name.first.toLowerCase().indexOf(text) !== -1 ||
-      user.name.last.toLowerCase().indexOf(text) !== -1
+      user.name.last.toLowerCase().indexOf(text) !== -1 ||
+      (user.name.first.toLowerCase() + user.name.last.toLowerCase()).indexOf(
+        text
+      ) !== -1
   );
   if (filteredList.length === 0) {
     message.classList.remove('hide');
@@ -102,7 +106,7 @@ const createUsers = (options) => {
     <tr>
       <th>${options.name.first + ' ' + options.name.last}</th>
       <th>
-        <div class="tooltip">
+        <div>
           <img src="${options.picture.thumbnail}" data-loginUserName="${
       options.login.username
     }">
@@ -111,7 +115,11 @@ const createUsers = (options) => {
       <th>${options.location.state + ' ' + options.location.city}</th>
       <th>${options.email}</th>
       <th>${options.phone}</th>
-      <th>${options.registered.date}</th>
+      <th>${options.registered.date
+        .slice(0, 10)
+        .split('-')
+        .reverse()
+        .join('-')}</th>
     </tr>
   </table>
   `
@@ -131,8 +139,23 @@ tableUsers.addEventListener('mouseover', (event) => {
   for (user of userList) {
     if (username === user.login.username) {
       tooltipImg = document.createElement('div');
+      tooltipImg.className = 'tooltip';
       tooltipImg.innerHTML = `<img src="${user.picture.large}" >`;
-      target.parentNode.append(tooltipImg);
+      document.body.append(tooltipImg);
+
+      let coords = target.getBoundingClientRect();
+
+      let left =
+        coords.left + (target.offsetWidth - tooltipImg.offsetWidth) / 2;
+      if (left < 0) left = 0;
+
+      let top = coords.top - tooltipImg.offsetHeight - 5;
+      if (top < 0) {
+        top = coords.top + target.offsetHeight + 5;
+      }
+
+      tooltipImg.style.left = left + 'px';
+      tooltipImg.style.top = top + 'px';
     }
   }
 });

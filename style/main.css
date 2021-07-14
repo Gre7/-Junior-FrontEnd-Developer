@@ -93,11 +93,12 @@ th {
 }
 
 /*tooltip*/
-/*
-.tooltip {
 
+.tooltip {
+  position: fixed;
+  text-align: center;
 }
-*/
+
 .message {
   font-size: 1.3rem;
   font-weight: 500;
