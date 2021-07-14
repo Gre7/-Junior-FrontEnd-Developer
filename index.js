@@ -44,6 +44,7 @@ fetch('https://randomuser.me/api/?results=15')
   .catch(console.log)
   .then((options) => {
     userList = options.results;
+    console.log('userList: ', userList);
     updateTable(userList);
   });
 
@@ -100,7 +101,13 @@ const createUsers = (options) => {
     `
     <tr>
       <th>${options.name.first + ' ' + options.name.last}</th>
-      <th><img src="${options.picture.thumbnail}" class="tooltip"></th>
+      <th>
+        <div class="tooltip">
+          <img src="${options.picture.thumbnail}" data-loginUserName="${
+      options.login.username
+    }">
+        </div>
+      </th>
       <th>${options.location.state + ' ' + options.location.city}</th>
       <th>${options.email}</th>
       <th>${options.phone}</th>
@@ -113,6 +120,32 @@ const createUsers = (options) => {
   categories.className = '';
   removeLoader();
 };
+
+let tooltipImg;
+
+tableUsers.addEventListener('mouseover', (event) => {
+  let target = event.target;
+  if (target.tagName != 'IMG') return;
+  const username = target.dataset.loginusername;
+
+  for (user of userList) {
+    if (username === user.login.username) {
+      tooltipImg = document.createElement('div');
+      tooltipImg.innerHTML = `<img src="${user.picture.large}" >`;
+      target.parentNode.append(tooltipImg);
+    }
+  }
+});
+
+tableUsers.addEventListener('mouseout', (event) => {
+  let target = event.target;
+  if (target.tagName != 'IMG') return;
+
+  if (tooltipImg) {
+    tooltipImg.remove();
+    tooltipImg = null;
+  }
+});
 
 //Get data
 // const getData = async (url) => {

@@ -93,23 +93,11 @@ th {
 }
 
 /*tooltip*/
-
+/*
 .tooltip {
-  position: relative;
-  display: inline-block;
-}
 
-.tooltipimg {
-  visibility: hidden;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
 }
-
-.tooltip:hover .tooltipimg {
-  visibility: visible;
-}
-
+*/
 .message {
   font-size: 1.3rem;
   font-weight: 500;
