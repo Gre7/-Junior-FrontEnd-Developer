@@ -1,14 +1,14 @@
-const tableUsers = document.getElementById('tableUsers');
-const container = document.getElementById('container');
-const table = document.querySelector('.table');
-const searchContainer = document.querySelector('.search-container');
-const categories = document.getElementById('categories');
-const inputSearch = document.querySelector('.input-search');
-const clearBtn = document.querySelector('.button_clear');
-const loader = document.createElement('div');
-const message = document.querySelector('.message');
+const tableUsers = document.getElementById('tableUsers'),
+  container = document.getElementById('container'),
+  table = document.querySelector('.table'),
+  searchContainer = document.querySelector('.search-container'),
+  inputSearch = document.querySelector('.input-search'),
+  clearBtn = document.querySelector('.button_clear'),
+  loader = document.createElement('div'),
+  message = document.querySelector('.message');
 
 let userList = [];
+let tooltipImg;
 
 //Createloader
 const createLoader = () => {
@@ -28,10 +28,13 @@ const createLoader = () => {
   `
   );
   searchContainer.className = 'hide';
-  categories.className = 'hide';
 };
 
 createLoader();
+
+const removeLoader = () => {
+  loader.remove();
+};
 
 //Server request
 fetch('https://randomuser.me/api/?results=15')
@@ -44,13 +47,49 @@ fetch('https://randomuser.me/api/?results=15')
   .catch(console.log)
   .then((options) => {
     userList = options.results;
-    console.log('userList: ', userList);
     updateTable(userList);
   });
 
 const updateTable = (users) => {
-  tableUsers.innerHTML = '';
+  tableUsers.innerHTML = `
+    <tr>
+      <th>Name</th>
+      <th>Picture</th>
+      <th>Location</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Registered Date</th>
+    </tr>
+    `;
   users.forEach(createUsers);
+};
+
+//renderUsers
+const createUsers = (options) => {
+  tableUsers.insertAdjacentHTML(
+    'beforeend',
+    `
+    <tr>
+      <th>${options.name.first + ' ' + options.name.last}</th>
+      <th>
+          <img src="${options.picture.thumbnail}" data-loginUserName="${
+      options.login.username
+    }">
+      </th>
+      <th>${options.location.state + ' ' + options.location.city}</th>
+      <th>${options.email}</th>
+      <th>${options.phone}</th>
+      <th>${options.registered.date
+        .slice(0, 10)
+        .split('-')
+        .reverse()
+        .join('-')}</th>
+    </tr>
+  </table>
+  `
+  );
+  searchContainer.className = 'search-container';
+  removeLoader();
 };
 
 //Filter
@@ -67,21 +106,24 @@ const filterInput = () => {
   );
   if (filteredList.length === 0) {
     message.classList.remove('hide');
+    tableUsers.classList.add('hide');
   } else {
     message.classList.add('hide');
+    tableUsers.classList.remove('hide');
   }
   updateTable(filteredList);
 };
 
-inputSearch.addEventListener('keyup', debounce(filterInput, 500));
-
-clearBtn.addEventListener('click', () => {
+//Отчищаем поле ввода
+const clearInput = () => {
   inputSearch.value = '';
   message.classList.add('hide');
+  tableUsers.classList.remove('hide');
   updateTable(userList);
-});
+};
 
-function debounce(f, ms) {
+//debounce function
+const debounce = (f, ms) => {
   let isCooldown = false;
 
   return function () {
@@ -93,45 +135,10 @@ function debounce(f, ms) {
 
     setTimeout(() => (isCooldown = false), ms);
   };
-}
-
-const removeLoader = () => {
-  loader.remove();
-};
-//renderUsers
-const createUsers = (options) => {
-  tableUsers.insertAdjacentHTML(
-    'beforeend',
-    `
-    <tr>
-      <th>${options.name.first + ' ' + options.name.last}</th>
-      <th>
-        <div>
-          <img src="${options.picture.thumbnail}" data-loginUserName="${
-      options.login.username
-    }">
-        </div>
-      </th>
-      <th>${options.location.state + ' ' + options.location.city}</th>
-      <th>${options.email}</th>
-      <th>${options.phone}</th>
-      <th>${options.registered.date
-        .slice(0, 10)
-        .split('-')
-        .reverse()
-        .join('-')}</th>
-    </tr>
-  </table>
-  `
-  );
-  searchContainer.className = 'search-container';
-  categories.className = '';
-  removeLoader();
 };
 
-let tooltipImg;
-
-tableUsers.addEventListener('mouseover', (event) => {
+//tooltip с изображением
+const addToolTip = (event) => {
   let target = event.target;
   if (target.tagName != 'IMG') return;
   const username = target.dataset.loginusername;
@@ -158,9 +165,9 @@ tableUsers.addEventListener('mouseover', (event) => {
       tooltipImg.style.top = top + 'px';
     }
   }
-});
+};
 
-tableUsers.addEventListener('mouseout', (event) => {
+const removeToolTip = (event) => {
   let target = event.target;
   if (target.tagName != 'IMG') return;
 
@@ -168,17 +175,13 @@ tableUsers.addEventListener('mouseout', (event) => {
     tooltipImg.remove();
     tooltipImg = null;
   }
-});
+};
 
-//Get data
-// const getData = async (url) => {
-//   const response = await fetch(url)
-//   if (!response.ok) {
-//     throw new Error(`Error at ${url}, error status: ${response.status}!`)
-//   }
-
-//   return await response.json()
-//   console.log('response: ', response)
-// }
-
-//getData('https://randomuser.me/api/?results=15').then(options)
+//Оборачиваем поиск в функцию debounce
+inputSearch.addEventListener('keyup', debounce(filterInput, 500));
+//Чистим поле ввода
+clearBtn.addEventListener('click', clearInput);
+//Добавляем tooltip
+tableUsers.addEventListener('mouseover', addToolTip);
+//Удаляем tooltip
+tableUsers.addEventListener('mouseout', removeToolTip);
