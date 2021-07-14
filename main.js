@@ -1,11 +1,11 @@
-const tableUsers = document.getElementById('tableUsers'),
-  container = document.getElementById('container'),
-  table = document.querySelector('.table'),
-  searchContainer = document.querySelector('.search-container'),
-  inputSearch = document.querySelector('.input-search'),
-  clearBtn = document.querySelector('.button_clear'),
-  loader = document.createElement('div'),
-  message = document.querySelector('.message');
+const tableUsers = document.getElementById('tableUsers');
+const container = document.getElementById('container');
+const table = document.querySelector('.table');
+const searchContainer = document.querySelector('.search-container');
+const inputSearch = document.querySelector('.input-search');
+const clearBtn = document.querySelector('.button_clear');
+const loader = document.createElement('div');
+const message = document.querySelector('.message');
 
 let userList = [];
 let tooltipImg;
@@ -66,24 +66,26 @@ const updateTable = (users) => {
 
 //renderUsers
 const createUsers = (options) => {
+  const registeredDate = options.registered.date
+    .slice(0, 10)
+    .split('-')
+    .reverse()
+    .join('-');
+
   tableUsers.insertAdjacentHTML(
     'beforeend',
     `
     <tr>
       <th>${options.name.first + ' ' + options.name.last}</th>
       <th>
-          <img src="${options.picture.thumbnail}" data-loginUserName="${
+          <img src="${options.picture.thumbnail}" data-login-user-name="${
       options.login.username
     }">
       </th>
       <th>${options.location.state + ' ' + options.location.city}</th>
       <th>${options.email}</th>
       <th>${options.phone}</th>
-      <th>${options.registered.date
-        .slice(0, 10)
-        .split('-')
-        .reverse()
-        .join('-')}</th>
+      <th>${registeredDate}</th>
     </tr>
   </table>
   `
@@ -114,7 +116,7 @@ const filterInput = () => {
   updateTable(filteredList);
 };
 
-//Отчищаем поле ввода
+//Clearing input area
 const clearInput = () => {
   inputSearch.value = '';
   message.classList.add('hide');
@@ -123,25 +125,21 @@ const clearInput = () => {
 };
 
 //debounce function
-const debounce = (f, ms) => {
-  let isCooldown = false;
-
-  return function () {
-    if (isCooldown) return;
-
-    f.apply(this, arguments);
-
-    isCooldown = true;
-
-    setTimeout(() => (isCooldown = false), ms);
+const debounce = (func, timeout = 300) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
   };
 };
 
-//tooltip с изображением
+//tooltip with img
 const addToolTip = (event) => {
   let target = event.target;
   if (target.tagName != 'IMG') return;
-  const username = target.dataset.loginusername;
+  const username = target.dataset.loginUserName;
 
   for (user of userList) {
     if (username === user.login.username) {
@@ -177,11 +175,11 @@ const removeToolTip = (event) => {
   }
 };
 
-//Оборачиваем поиск в функцию debounce
+//Wrapping search in a debounce function
 inputSearch.addEventListener('keyup', debounce(filterInput, 500));
-//Чистим поле ввода
+//Clearing input area
 clearBtn.addEventListener('click', clearInput);
-//Добавляем tooltip
+//Add tooltip
 tableUsers.addEventListener('mouseover', addToolTip);
-//Удаляем tooltip
+//Remove tooltip
 tableUsers.addEventListener('mouseout', removeToolTip);
